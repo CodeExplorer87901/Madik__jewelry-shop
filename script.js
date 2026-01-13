@@ -13,8 +13,8 @@ let activeFilters = {
     size: null,
 };
 
-// Номер WhatsApp
-const WHATSAPP_NUMBER = "996998252023";
+// Номер WhatsApp (без + и пробелов для wa.me)
+const WHATSAPP_NUMBER = "996220118075";
 
 // Данные товаров
 const products = [
@@ -822,6 +822,9 @@ function submitOrder() {
             message += "\n\n";
         }
     });
+
+    // Добавляем запрос наличия в конце
+    message += "\n\nесть в наличии ?";
 
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
