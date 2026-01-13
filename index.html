@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nike Tech Fleece - Каталог</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="container">
+        <h1 class="logo">Nike Tech Fleece</h1>
+        <p class="subtitle">Каталог одежды</p>
+        <div class="header-actions">
+          <button class="cart-btn" id="cartBtn" style="display: none">
+            <span class="cart-icon">🛒</span>
+            <span class="cart-count" id="cartCount">0</span>
+          </button>
+          <button class="order-btn" id="orderBtn" style="display: none">
+            Заказать
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      <div class="container">
+        <!-- Фильтры -->
+        <div class="filters">
+          <div class="filter-group">
+            <label class="filter-label">Цвет:</label>
+            <div class="filter-buttons" id="colorFilters">
+              <!-- Кнопки фильтров по цвету будут добавлены через JavaScript -->
+            </div>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Размер:</label>
+            <div class="filter-buttons" id="sizeFilters">
+              <!-- Кнопки фильтров по размеру будут добавлены через JavaScript -->
+            </div>
+          </div>
+        </div>
+        <div class="catalog" id="catalog">
+          <!-- Карточки товаров будут добавлены через JavaScript -->
+        </div>
+      </div>
+    </main>
+
+    <!-- Фиксированная корзинка -->
+    <div class="fixed-cart" id="fixedCart" style="display: none">
+      <button class="fixed-cart-btn" id="fixedCartBtn">
+        <span class="cart-icon">🛒</span>
+        <span class="cart-count" id="fixedCartCount">0</span>
+      </button>
+    </div>
+
+    <!-- Модальное окно товара -->
+    <div class="modal" id="modal">
+      <div class="modal-overlay" id="modalOverlay"></div>
+      <div class="modal-content">
+        <button class="modal-close" id="modalClose" aria-label="Закрыть">
+          ×
+        </button>
+        <div class="modal-body">
+          <div class="modal-image">
+            <img id="modalImage" src="" alt="" />
+          </div>
+          <div class="modal-info">
+            <h2 id="modalTitle"></h2>
+            <p id="modalDescription"></p>
+            <div class="size-selection">
+              <p class="size-label">Выберите размер:</p>
+              <div class="size-buttons" id="sizeButtons"></div>
+            </div>
+            <button class="select-btn" id="selectBtn" disabled>
+              Выбрать эту модель
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Модальное окно заказа -->
+    <div class="modal" id="orderModal">
+      <div class="modal-overlay" id="orderModalOverlay"></div>
+      <div class="modal-content order-modal-content">
+        <button class="modal-close" id="orderModalClose" aria-label="Закрыть">
+          ×
+        </button>
+        <div class="order-form">
+          <h2>Оформление заказа</h2>
+          <div class="order-item" id="orderItem"></div>
+          <button class="submit-order-btn" id="submitOrderBtn">
+            Отправить в WhatsApp
+          </button>
+        </div>
+      </div>
+    </div>
+    <script src="./script.js"></script>
+  </body>
+</html>
