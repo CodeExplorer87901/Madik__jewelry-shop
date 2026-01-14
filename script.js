@@ -53,7 +53,7 @@ const products = [
         id: 4,
         image:
             "./assets/Nike tech fleece  Reflective  Black - черный  М, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — Reflective Черный" ,
+        title: "Nike Tech Fleece — Reflective Черный",
         description: "Reflective\nBlack",
         color: "Black",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -526,7 +526,7 @@ const products = [
         availableSizes: [],
         category: "Bags",
     },
-     {
+    {
         id: 45,
         image: "./assets/NikeHoopsEliteMaxAirTigerWhite.jpeg",
         title: "Nike Hoops Elite Max Air / Team Backpack Tiger White",
@@ -681,6 +681,14 @@ const COLOR_GROUPS = [
     "Оранжевый",
 ];
 
+// Порядок и название брендов, которые отображаем первыми
+const BRANDS = ["Nike", "Polo"];
+
+// Возвращает бренд товара (по умолчанию Nike для существующих записей)
+function brandOf(p) {
+    return p && p.brand ? p.brand : "Nike";
+}
+
 // Функция, которая нормализует название цвета в одну из групп
 function colorGroup(color) {
     if (!color) return null;
@@ -699,6 +707,7 @@ function colorGroup(color) {
 function getUniqueColors() {
     const present = new Set();
     products.forEach((p) => {
+        if (activeFilters.brand && brandOf(p) !== activeFilters.brand) return;
         const g = colorGroup(p.color);
         if (g) present.add(g);
     });
@@ -707,14 +716,20 @@ function getUniqueColors() {
 
 // Получение уникальных размеров
 function getUniqueSizes() {
-    const allSizes = products.flatMap((p) => p.availableSizes);
+    const allSizes = products
+        .filter((p) => !activeFilters.brand || brandOf(p) === activeFilters.brand)
+        .flatMap((p) => p.availableSizes);
     const uniqueSizes = [...new Set(allSizes)];
+    // Оставим простую сортировку; при желании можно задать порядок вручную
     return uniqueSizes.sort();
 }
 
 // Получаем уникальные категории (только непустые)
 function getUniqueCategories() {
-    const cats = products.map((p) => p.category).filter(Boolean);
+    const cats = products
+        .filter((p) => !activeFilters.brand || brandOf(p) === activeFilters.brand)
+        .map((p) => p.category)
+        .filter(Boolean);
     return [...new Set(cats)];
 }
 
@@ -810,74 +825,139 @@ function autoAssignLocalImages() {
 
 autoAssignLocalImages();
 
+// Убедимся, что для бренда Polo есть ровно 39 карточек (добавим недостающие)
+(function ensurePoloProducts() {
+    const desired = 39;
+    const existing = products.filter((p) => p.brand === "Polo").length;
+    // Начнём id сразу после максимального существующего id
+    let nextId = Math.max(0, ...products.map((p) => Number(p.id) || 0)) + 1;
+
+    const colors = ["Gray", "Blue", "Black", "White", "Navy", "Red", "Green"];
+    const categories = ["T-shirt", "Polo", "Caps", "Tracksuit", "Set", "Shirt", "Accessories"];
+
+    for (let i = existing; i < desired; i++) {
+        const idx = i - existing;
+        const color = colors[idx % colors.length];
+        const category = categories[idx % categories.length];
+        const hasSizes = category !== "Caps" && category !== "Accessories";
+        const sizesStr = hasSizes ? "Размеры: M, L, XL, 2XL, 3XL" : "";
+        const available = hasSizes ? ["M", "L", "XL", "2XL", "3XL"] : [];
+
+        const imageIndex = idx + 1;
+        products.push({
+            id: nextId++,
+            image: `./assets/polo_${imageIndex}.jpeg`,
+            title: `Polo Ralph Lauren ${category} ${color}`,
+            description: `${category}\n${color}`,
+            color: color,
+            sizes: sizesStr,
+            availableSizes: available,
+            category: category,
+            brand: "Polo",
+        });
+    }
+})();
+
 // Инициализация фильтров
 function initFilters() {
+    const brandFilters = document.getElementById("brandFilters");
     const colorFilters = document.getElementById("colorFilters");
     const sizeFilters = document.getElementById("sizeFilters");
     const categoryFilters = document.getElementById("categoryFilters");
 
-    // Фильтры по цвету
-    const colors = getUniqueColors();
-    colors.forEach((color) => {
+    function createColorButtons() {
+        colorFilters.innerHTML = "";
+        const colors = getUniqueColors();
+        colors.forEach((color) => {
+            const btn = document.createElement("button");
+            btn.className = "filter-btn";
+            btn.textContent = color;
+            btn.addEventListener("click", () => {
+                colorFilters.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("active"));
+                if (activeFilters.color === color) {
+                    activeFilters.color = null;
+                } else {
+                    btn.classList.add("active");
+                    activeFilters.color = color;
+                }
+                filterProducts();
+            });
+            colorFilters.appendChild(btn);
+        });
+    }
+
+    function createSizeButtons() {
+        sizeFilters.innerHTML = "";
+        const sizes = getUniqueSizes();
+        sizes.forEach((size) => {
+            const btn = document.createElement("button");
+            btn.className = "filter-btn";
+            btn.textContent = size;
+            btn.addEventListener("click", () => {
+                sizeFilters.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("active"));
+                if (activeFilters.size === size) {
+                    activeFilters.size = null;
+                } else {
+                    btn.classList.add("active");
+                    activeFilters.size = size;
+                }
+                filterProducts();
+            });
+            sizeFilters.appendChild(btn);
+        });
+    }
+
+    function createCategoryButtons() {
+        categoryFilters.innerHTML = "";
+        const categories = getUniqueCategories();
+        categories.forEach((cat) => {
+            const btn = document.createElement("button");
+            btn.className = "filter-btn";
+            btn.textContent = cat;
+            btn.addEventListener("click", () => {
+                categoryFilters.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("active"));
+                if (activeFilters.category === cat) {
+                    activeFilters.category = null;
+                } else {
+                    btn.classList.add("active");
+                    activeFilters.category = cat;
+                }
+                filterProducts();
+            });
+            categoryFilters.appendChild(btn);
+        });
+    }
+
+    // Фильтры по бренду
+    brandFilters.innerHTML = "";
+    // Показать бренды в заранее определённом порядке, если они есть
+    const availBrands = BRANDS.filter((b) => products.some((p) => brandOf(p) === b));
+    availBrands.forEach((b) => {
         const btn = document.createElement("button");
         btn.className = "filter-btn";
-        btn.textContent = color;
+        btn.textContent = b;
         btn.addEventListener("click", () => {
-            // Переключаем активность
-            colorFilters.querySelectorAll(".filter-btn").forEach((b) => {
-                b.classList.remove("active");
-            });
-            if (activeFilters.color === color) {
-                activeFilters.color = null;
+            brandFilters.querySelectorAll(".filter-btn").forEach((bb) => bb.classList.remove("active"));
+            if (activeFilters.brand === b) {
+                activeFilters.brand = null;
             } else {
                 btn.classList.add("active");
-                activeFilters.color = color;
+                activeFilters.brand = b;
             }
+            // Сброс подфильтров при смене бренда (по желанию можно оставить выбранные)
+            activeFilters.color = null;
+            activeFilters.size = null;
+            activeFilters.category = null;
+            // Перерисовать группы фильтров, опираясь на выбранный бренд
+            createColorButtons();
+            createSizeButtons();
+            createCategoryButtons();
             filterProducts();
         });
-        colorFilters.appendChild(btn);
+        brandFilters.appendChild(btn);
     });
 
-    // Фильтры по категории
-    const categories = getUniqueCategories();
-    categories.forEach((cat) => {
-        const btn = document.createElement("button");
-        btn.className = "filter-btn";
-        btn.textContent = cat;
-        btn.addEventListener("click", () => {
-            categoryFilters.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("active"));
-            if (activeFilters.category === cat) {
-                activeFilters.category = null;
-            } else {
-                btn.classList.add("active");
-                activeFilters.category = cat;
-            }
-            filterProducts();
-        });
-        categoryFilters.appendChild(btn);
-    });
-
-    // Фильтры по размеру
-    const sizes = getUniqueSizes();
-    sizes.forEach((size) => {
-        const btn = document.createElement("button");
-        btn.className = "filter-btn";
-        btn.textContent = size;
-        btn.addEventListener("click", () => {
-            // Переключаем активность
-            sizeFilters.querySelectorAll(".filter-btn").forEach((b) => {
-                b.classList.remove("active");
-            });
-            if (activeFilters.size === size) {
-                activeFilters.size = null;
-            } else {
-                btn.classList.add("active");
-                activeFilters.size = size;
-            }
-            filterProducts();
-        });
-        sizeFilters.appendChild(btn);
-    });
+    // Подфильтры будут создаваться при выборе бренда (см. обработчик клика выше)
 }
 
 // Фильтрация товаров
@@ -885,7 +965,25 @@ function filterProducts() {
     const catalog = document.getElementById("catalog");
     catalog.innerHTML = "";
 
+    // Если бренд не выбран — не показываем товары и просим выбрать бренд
+    if (!activeFilters.brand) {
+        const emptyMessage = document.createElement("div");
+        emptyMessage.className = "empty-message";
+        emptyMessage.textContent = "Пожалуйста, выберите бренд (Nike или Polo)";
+        emptyMessage.style.textAlign = "center";
+        emptyMessage.style.padding = "40px";
+        emptyMessage.style.color = "#666666";
+        emptyMessage.style.fontSize = "18px";
+        catalog.appendChild(emptyMessage);
+        return;
+    }
+
     let filteredProducts = products;
+
+    // Фильтр по бренду (показываем только товары выбранного бренда)
+    if (activeFilters.brand) {
+        filteredProducts = filteredProducts.filter((p) => brandOf(p) === activeFilters.brand);
+    }
 
     // Фильтр по цвету (используем группы)
     if (activeFilters.color) {
@@ -1278,14 +1376,6 @@ function initModalHandlers() {
     // Обработчик отправки заказа
     submitOrderBtn.addEventListener("click", submitOrder);
 }
-
-// Загрузка изображений с обработкой ошибок
-function handleImageError(img) {
-    img.src =
-        "https://via.placeholder.com/800x800/f5f5f5/999999?text=Nike+Tech+Fleece";
-    img.alt = "Изображение недоступно";
-}
-
 // Инициализация при загрузке страницы
 document.addEventListener("DOMContentLoaded", () => {
     initFilters();
