@@ -18,6 +18,33 @@ activeFilters.category = null;
 // Номер WhatsApp (без + и пробелов для wa.me)
 const WHATSAPP_NUMBER = "996220118075";
 
+// Фолбэк для битых изображений (чтобы сайт не падал и не показывал "сломанные" картинки)
+function handleImageError(imgEl) {
+    try {
+        if (!imgEl || imgEl.dataset?.fallbackApplied === "1") return;
+        imgEl.dataset.fallbackApplied = "1";
+
+        // Встроенный SVG-плейсхолдер, чтобы не требовать внешних файлов
+        const svg = `
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c8e8f5"/>
+      <stop offset="1" stop-color="#ffd1dc"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#g)"/>
+  <g fill="#2c3e50" font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" text-anchor="middle">
+    <text x="400" y="310" font-size="34" font-weight="700">Нет фото</text>
+    <text x="400" y="350" font-size="18" opacity="0.7">Изображение недоступно</text>
+  </g>
+</svg>`;
+
+        imgEl.src = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg.trim());
+        imgEl.style.objectFit = "contain";
+    } catch (e) { }
+}
+
 // Данные товаров
 const products = [
     // 1️⃣ Nike Tech Fleece — Reflective
@@ -527,7 +554,7 @@ const products = [
         category: "Bags",
     },
     {
-        id: 45,
+        id: 64,
         image: "./assets/NikeHoopsEliteMaxAirTigerWhite.jpeg",
         title: "Nike Hoops Elite Max Air / Team Backpack Tiger White",
         description: "Elite Pro Backpack\nOrange",
@@ -825,37 +852,119 @@ function autoAssignLocalImages() {
 
 autoAssignLocalImages();
 
-// Убедимся, что для бренда Polo есть ровно 39 карточек (добавим недостающие)
-(function ensurePoloProducts() {
-    const desired = 39;
-    const existing = products.filter((p) => p.brand === "Polo").length;
-    // Начнём id сразу после максимального существующего id
+// Polo: создаём карточки строго по названиям файлов из папки assetspolo
+const POLO_ASSET_DIR = "./assetspolo";
+const POLO_ASSET_FILES = [
+    "Polo Ralph Laurent  Cap Стандарт  Бордовый.jpeg",
+    "Polo Ralph Laurent  Cap Стандарт  Black White Horse.jpeg",
+    "Polo Ralph Laurent  Cap Стандарт  Black.jpeg",
+    "Polo Ralph Laurent  Cap Стандарт  Blue.jpeg",
+    "Polo Ralph Laurent  Cap Стандарт  Brown.jpeg",
+    "Polo Ralph Laurent  Cap Стандарт  Pink.jpeg",
+    "Polo Ralph Laurent  Cap Стандарт  White.jpeg",
+    "Polo Ralph Laurent  costume  Black.jpeg",
+    "Polo Ralph Laurent  costume  White.jpeg",
+    "Polo Ralph Laurent  costume Blue.jpeg",
+    "Polo Ralph Laurent  costume red Black.jpeg",
+    "Polo Ralph Laurent  costume red Blue.jpeg",
+    "Polo Ralph Laurent  Jacket  Black .jpeg",
+    "Polo Ralph Laurent  Jacket  Blue .jpeg",
+    "Polo Ralph Laurent  Jacket  Brown.jpeg",
+    "Polo Ralph Laurent  Sweater  Black.jpeg",
+    "Polo Ralph Laurent  Sweater  Pink.jpeg",
+    "Polo Ralph Laurent  Sweater Blue.jpeg",
+    "Polo Ralph Laurent  Sweater Gray.jpeg",
+    "Polo Ralph Laurent  Sweater White.jpeg",
+    "Polo Ralph Laurent  T-shirt   Blue.jpeg",
+    "Polo Ralph Laurent  T-shirt   Pink.jpeg",
+    "Polo Ralph Laurent  T-shirt   White.jpeg",
+    "Polo Ralph Laurent  T-shirt  Brown.jpeg",
+    "Polo Ralph Laurent  T-shirt  Gray.jpeg",
+    "Polo Ralph Laurent  T-shirt  Pink.jpeg",
+    "Polo Ralph Laurent  T-shirt  red Black.jpeg",
+    "Polo Ralph Laurent  T-shirt  Red.jpeg",
+    "Polo Ralph Laurent  T-shirt  White .jpeg",
+    "Polo Ralph Laurent  T-shirt  white Blue.jpeg",
+    "Polo Ralph Laurent  T-shirt Black.jpeg",
+    "Polo Ralph Laurent  Zip hoodie  Black.jpeg",
+    "Polo Ralph Laurent  Zip hoodie  red Blue.jpeg",
+    "Polo Ralph Laurent  Zip hoodie  White.jpeg",
+    "Polo Ralph Laurent  Zip hoodie Blue.jpeg",
+    "Polo Ralph Laurent  Zip hoodie Gray.jpeg",
+    "Polo Ralph Laurent  Zip hoodie red Black.jpeg",
+    "PoloRalphLaurent T-shirt Blue.jpeg",
+    "PoloRalphLaurentT-shirtGray.jpeg",
+];
+
+function poloCategoryFromFilename(baseName) {
+    const s = (baseName || "").toString().toLowerCase();
+    if (s.includes("cap")) return "Caps";
+    if (s.includes("t-shirt") || s.includes("tshirt")) return "T-shirt";
+    if (s.includes("zip hoodie") || s.includes("hoodie")) return "Zip hoodie";
+    if (s.includes("sweater")) return "Sweater";
+    if (s.includes("jacket")) return "Jacket";
+    if (s.includes("costume") || s.includes("tracksuit")) return "Costume";
+    if (s.includes("shirt")) return "Shirt";
+    return "Polo";
+}
+
+function poloColorFromFilename(baseName, category) {
+    const raw = (baseName || "").toString();
+    let s = raw
+        .replace(/\.jpe?g$/i, "")
+        .replace(/polo\s*ralph\s*laurent\s*/i, "")
+        .replace(/poloralphlaurent\s*/i, "")
+        .replace(/[_-]+/g, " ");
+
+    if (category) {
+        // убираем категорию (без учёта регистра), чтобы осталось "что-то похожее на цвет"
+        s = s.replace(new RegExp(category.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"), " ");
+    }
+
+    s = s
+        .replace(/\s+/g, " ")
+        .trim();
+
+    // убираем частые слова, которые не являются цветом
+    const remove = new Set(["cap", "стандарт", "t-shirt", "zip", "hoodie", "sweater", "jacket", "costume"]);
+    const tokens = s.split(" ").filter(Boolean);
+    const filtered = tokens.filter((t) => !remove.has(t.toLowerCase()));
+    const color = filtered.join(" ").trim();
+
+    // если после чистки ничего не осталось — возвращаем исходную строку
+    return color || s || raw;
+}
+
+(function syncPoloProductsFromAssets() {
+    // Удаляем любые ранее созданные/заглушечные Polo-товары, чтобы не было дублей
+    for (let i = products.length - 1; i >= 0; i--) {
+        if (products[i] && products[i].brand === "Polo") {
+            products.splice(i, 1);
+        }
+    }
+
     let nextId = Math.max(0, ...products.map((p) => Number(p.id) || 0)) + 1;
+    const sizeStr = "Размеры: M, L, XL, 2XL, 3XL";
+    const sizeArr = ["M", "L", "XL", "2XL", "3XL"];
 
-    const colors = ["Gray", "Blue", "Black", "White", "Navy", "Red", "Green"];
-    const categories = ["T-shirt", "Polo", "Caps", "Tracksuit", "Set", "Shirt", "Accessories"];
-
-    for (let i = existing; i < desired; i++) {
-        const idx = i - existing;
-        const color = colors[idx % colors.length];
-        const category = categories[idx % categories.length];
+    POLO_ASSET_FILES.forEach((fname) => {
+        const base = fname.replace(/\.jpe?g$/i, "");
+        const category = poloCategoryFromFilename(base);
+        const color = poloColorFromFilename(base, category);
         const hasSizes = category !== "Caps" && category !== "Accessories";
-        const sizesStr = hasSizes ? "Размеры: M, L, XL, 2XL, 3XL" : "";
-        const available = hasSizes ? ["M", "L", "XL", "2XL", "3XL"] : [];
 
-        const imageIndex = idx + 1;
         products.push({
             id: nextId++,
-            image: `./assets/polo_${imageIndex}.jpeg`,
-            title: `Polo Ralph Lauren ${category} ${color}`,
+            image: `${POLO_ASSET_DIR}/${fname}`,
+            title: base,
             description: `${category}\n${color}`,
             color: color,
-            sizes: sizesStr,
-            availableSizes: available,
+            sizes: hasSizes ? sizeStr : "",
+            availableSizes: hasSizes ? sizeArr : [],
             category: category,
             brand: "Polo",
         });
-    }
+    });
 })();
 
 // Инициализация фильтров
