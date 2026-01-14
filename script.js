@@ -12,6 +12,8 @@ let activeFilters = {
     color: null,
     size: null,
 };
+// Добавляем категорию в активные фильтры
+activeFilters.category = null;
 
 // Номер WhatsApp (без + и пробелов для wa.me)
 const WHATSAPP_NUMBER = "996220118075";
@@ -22,7 +24,7 @@ const products = [
     {
         id: 1,
         image: "./assets/Nike tech fleece  Reflective  White -белый  М, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — Reflective",
+        title: "Nike Tech Fleece — Reflective Белый",
         description: "Reflective\nWhite",
         color: "White",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -31,7 +33,7 @@ const products = [
     {
         id: 2,
         image: "./assets/Nike tech fleece  Reflective   grey- серый  М, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — Reflective",
+        title: "Nike Tech Fleece — Reflective Серый",
         description: "Reflective\nGrey",
         color: "Grey",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -41,7 +43,7 @@ const products = [
         id: 3,
         image:
             "./assets/Nike tech fleece  Reflective  Черно -серый   М, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — Reflective",
+        title: "Nike Tech Fleece — Reflective Черно-серый",
         description: "Reflective\nЧерно-серый",
         color: "Черно-серый",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -51,7 +53,7 @@ const products = [
         id: 4,
         image:
             "./assets/Nike tech fleece  Reflective  Black - черный  М, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — Reflective",
+        title: "Nike Tech Fleece — Reflective Черный" ,
         description: "Reflective\nBlack",
         color: "Black",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -61,7 +63,7 @@ const products = [
         id: 5,
         image:
             "./assets/Nike tech fleece  Reflective  Blue - голубой  М, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — Reflective",
+        title: "Nike Tech Fleece — Reflective Голубой",
         description: "Reflective\nBlue",
         color: "Blue",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -71,7 +73,7 @@ const products = [
         id: 6,
         image:
             "./assets/Nike tech fleece  Reflective  Brown- коричневый  М, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — Reflective",
+        title: "Nike Tech Fleece — Reflective Коричневый",
         description: "Reflective\nBrown",
         color: "Brown",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -82,7 +84,7 @@ const products = [
         id: 7,
         image:
             "./assets/Nike tech fleece  Suna world Center C Черно-серый  М, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — Suna World Center C",
+        title: "Nike Tech Fleece — Suna World Center Черно-серый",
         description: "Suna World Center C\nЧерно-серый",
         color: "Черно-серый",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -92,7 +94,7 @@ const products = [
         id: 8,
         image:
             "./assets/Nike tech fleece  Suna world Center C White- Белый  М, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — Suna World Center C",
+        title: "Nike Tech Fleece — Suna World Center Белый",
         description: "Suna World Center C\nWhite",
         color: "White",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -102,7 +104,7 @@ const products = [
         id: 9,
         image:
             "./assets/Nike tech fleece  Suna world Center C Great-серый  М, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — Suna World Center C",
+        title: "Nike Tech Fleece — Suna World Center  Серый",
         description: "Suna World Center C\nGrey",
         color: "Grey",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -112,7 +114,7 @@ const products = [
         id: 10,
         image:
             "./assets/Nike tech fleece  Suna world Center C Black- Черный М, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — Suna World Center C",
+        title: "Nike Tech Fleece — Suna World Center  Черный",
         description: "Suna World Center C\nBlack",
         color: "Black",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -123,7 +125,7 @@ const products = [
         id: 11,
         image:
             "./assets/Nike tech fleece  Nocta Black- черный  М, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — Nocta",
+        title: "Nike Tech Fleece — Nocta Серый",
         description: "Nocta\nGrey",
         color: "Grey",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -133,7 +135,7 @@ const products = [
         id: 12,
         image:
             "./assets/Nike tech fleece  Nocta Orange- оранжевый  М, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — Nocta",
+        title: "Nike Tech Fleece — Nocta Оранжевый",
         description: "Nocta\nOrange",
         color: "Orange",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -143,7 +145,7 @@ const products = [
         id: 13,
         image:
             "./assets/Nike tech fleece  Nocta Purple- фиолетовый  М, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — Nocta",
+        title: "Nike Tech Fleece — Nocta ФИолетовый",
         description: "Nocta\nViolet",
         color: "Violet",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -153,7 +155,7 @@ const products = [
         id: 14,
         image:
             "./assets/Nike tech fleece  Nocta Yellow- желтый  М, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — Nocta",
+        title: "Nike Tech Fleece — Nocta Желтый",
         description: "Nocta\nYellow",
         color: "Yellow",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -164,7 +166,7 @@ const products = [
         id: 15,
         image:
             "./assets/Nike tech fleece  Nocta  new season  Черно серый  М, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — Nocta New Season",
+        title: "Nike Tech Fleece — Nocta New Season     Черно-серый",
         description: "Nocta New Season\nЧерно-серый",
         color: "Черно-серый",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -174,7 +176,7 @@ const products = [
         id: 16,
         image:
             "./assets/Nike tech fleece  Nocta  new season  Красный  М, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — Nocta New Season",
+        title: "Nike Tech Fleece — Nocta New Season Красный",
         description: "Nocta New Season\nКрасный",
         color: "Красный",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -184,7 +186,7 @@ const products = [
         id: 17,
         image:
             "./assets/Nike tech fleece  Nocta  new season  Темно синий  М, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — Nocta New Season",
+        title: "Nike Tech Fleece — Nocta New Season Темно-синий",
         description: "Nocta New Season\nТемно-синий",
         color: "Темно-синий",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -194,7 +196,7 @@ const products = [
         id: 18,
         image:
             "./assets/Nike tech fleece  Nocta  new season  Темно серый  М, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — Nocta New Season",
+        title: "Nike Tech Fleece — Nocta New Season Темно-серый",
         description: "Nocta New Season\nТемно-серый",
         color: "Темно-серый",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -204,7 +206,7 @@ const products = [
         id: 19,
         image:
             "./assets/Nike tech fleece  Nocta  new season  Голубой  М, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — Nocta New Season",
+        title: "Nike Tech Fleece — Nocta New Season Голубой",
         description: "Nocta New Season\nГолубой",
         color: "Голубой",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -214,7 +216,7 @@ const products = [
         id: 20,
         image:
             "./assets/Nike tech fleece  Nocta  new season  Бежевый  М, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — Nocta New Season",
+        title: "Nike Tech Fleece — Nocta New Season Бежевый",
         description: "Nocta New Season\nБежевый",
         color: "Бежевый",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -224,8 +226,8 @@ const products = [
     {
         id: 21,
         image:
-            "./assets/WhatsApp Image 2026-01-13 at 17.27.17.jpeg",
-        title: "Nike Tech Fleece — стандартная коллекция",
+            "./assets/белыйтчфлиско.jpeg",
+        title: "Nike Tech Fleece — стандартная коллекция Белый",
         description: "Стандартная коллекция\nБелый",
         color: "Белый",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -235,7 +237,7 @@ const products = [
         id: 22,
         image:
             "./assets/Nike tech fleece  Голубой  M, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — стандартная коллекция",
+        title: "Nike Tech Fleece — стандартная коллекция Голубой",
         description: "Стандартная коллекция\nГолубой",
         color: "Голубой",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -245,7 +247,7 @@ const products = [
         id: 23,
         image:
             "./assets/Nike tech fleece  Бордовый  M, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — стандартная коллекция",
+        title: "Nike Tech Fleece — стандартная коллекция Бордовый",
         description: "Стандартная коллекция\nБордовый",
         color: "Бордовый",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -255,7 +257,7 @@ const products = [
         id: 24,
         image:
             "./assets/Nike tech fleece  Красный M, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — стандартная коллекция",
+        title: "Nike Tech Fleece — стандартная коллекция Красный",
         description: "Стандартная коллекция\nКрасный",
         color: "Красный",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -265,7 +267,7 @@ const products = [
         id: 25,
         image:
             "./assets/Nike tech fleece  Зеленый  M, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — стандартная коллекция",
+        title: "Nike Tech Fleece — стандартная коллекция Зелёный",
         description: "Стандартная коллекция\nЗелёный",
         color: "Зелёный",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -275,7 +277,7 @@ const products = [
         id: 26,
         image:
             "./assets/Nike tech fleece  Серый ◻️ M, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — стандартная коллекция",
+        title: "Nike Tech Fleece — стандартная коллекция Серый",
         description: "Стандартная коллекция\nСерый",
         color: "Серый",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -285,7 +287,7 @@ const products = [
         id: 27,
         image:
             "./assets/Nike tech fleece  сырый  M, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — стандартная коллекция",
+        title: "Nike Tech Fleece — стандартная коллекция Серый ",
         description: "Стандартная коллекция\nСерый (сырый)",
         color: "Серый (сырый)",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -295,7 +297,7 @@ const products = [
         id: 28,
         image:
             "./assets/Nike tech fleece  Черный   M, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — стандартная коллекция",
+        title: "Nike Tech Fleece — стандартная коллекция Чёрный",
         description: "Стандартная коллекция\nЧёрный",
         color: "Чёрный",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -305,7 +307,7 @@ const products = [
         id: 29,
         image:
             "./assets/Nike tech fleece  Черный 🔴 M, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — стандартная коллекция",
+        title: "Nike Tech Fleece — стандартная коллекция Чёрный 🔴",
         description: "Стандартная коллекция\nЧёрный 🔴",
         color: "Чёрный 🔴",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -315,7 +317,7 @@ const products = [
         id: 30,
         image:
             "./assets/Nike tech fleece  Черно серый  M, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — стандартная коллекция",
+        title: "Nike Tech Fleece — стандартная коллекция Черно-серый",
         description: "Стандартная коллекция\nЧёрно-серый",
         color: "Чёрно-серый",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -325,7 +327,7 @@ const products = [
         id: 31,
         image:
             "./assets/Nike tech fleece  Черный 🌿 M, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — стандартная коллекция",
+        title: "Nike Tech Fleece — стандартная коллекция Черный 🌿",
         description: "Стандартная коллекция\nЧерный 🌿",
         color: "Черный 🌿",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -335,7 +337,7 @@ const products = [
         id: 32,
         image:
             "./assets/Nike tech fleece  Темно синий  M, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — стандартная коллекция",
+        title: "Nike Tech Fleece — стандартная коллекция Темно-синий",
         description: "Стандартная коллекция\nТемно-синий",
         color: "Темно-синий",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -346,7 +348,7 @@ const products = [
         id: 33,
         image:
             "./assets/Nike tech fleece  New season  Серо голубая  M, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — New Season",
+        title: "Nike Tech Fleece — New Season Серо-голубая",
         description: "New Season\nСеро-голубая",
         color: "Серо-голубая",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -356,7 +358,7 @@ const products = [
         id: 34,
         image:
             "./assets/Nike tech fleece  New season  Черный M, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — New Season",
+        title: "Nike Tech Fleece — New Season Черный",
         description: "New Season\nЧерный",
         color: "Черный",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -365,8 +367,8 @@ const products = [
     {
         id: 35,
         image:
-            "./assets/Nike tech fleece  New season  Серая  M, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — New Season",
+            "./assets/серый.jpeg",
+        title: "Nike Tech Fleece — New Season Серая",
         description: "New Season\nСерая",
         color: "Серая",
         sizes: "Размеры: M, L, XL, 2XL",
@@ -376,11 +378,295 @@ const products = [
         id: 36,
         image:
             "./assets/Nike tech fleece  New season  Черно серая  M, L, XL, 2XL.jpeg",
-        title: "Nike Tech Fleece — New Season",
+        title: "Nike Tech Fleece — New Season Черно-серая",
         description: "New Season\nЧерно-серая",
         color: "Черно-серая",
         sizes: "Размеры: M, L, XL, 2XL",
         availableSizes: ["M", "L", "XL", "2XL"],
+    },
+    // ===== Секция: Сумки (bags) — пользователь добавит фото позже =====
+    {
+        id: 37,
+        image: "./assets/NikeHoopsEliteProBasketballBackpackBlack2.jpeg",
+        title: "Nike Hoops Elite Pro Basketball Backpack Black",
+        description: "Elite Pro Backpack\nBlack",
+        color: "Black",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    {
+        id: 38,
+        image: "./assets/NikeHoopsEliteProBasketballBackpackWhite.jpeg",
+        title: "Nike Hoops Elite Pro Basketball Backpack White",
+        description: "Elite Pro Backpack\nWhite",
+        color: "White",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    {
+        id: 39,
+        image: "./assets/NikeHoopsEliteProBasketballBackpackNavyBlue.jpeg",
+        title: "Nike Hoops Elite Pro Basketball Backpack Navy Blue",
+        description: "Elite Pro Backpack\nNavy",
+        color: "Navy",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    {
+        id: 40,
+        image: "./assets/NikeHoopsEliteProBasketballBackpackFiol.jpeg",
+        title: "Nike Hoops Elite Pro Basketball Backpack Fiolent",
+        description: "Elite Pro Backpack\nFiolent",
+        color: "Fiolent",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    {
+        id: 41,
+        image: "./assets/NikeHoopsEliteProBasketballBackpackPink.jpeg",
+        title: "Nike Hoops Elite Pro Basketball Backpack Pink",
+        description: "Elite Pro Backpack\nPink",
+        color: "Pink",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    {
+        id: 42,
+        image: "./assets/NikeHoopsEliteProBasketballBackpackPinkWrite.jpeg",
+        title: "Nike Hoops Elite Pro Basketball Backpack Pink Write",
+        description: "Elite Pro Backpack\nPink Write",
+        color: "Pink Write",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    // Восстанавливаем предыдущие 6 сумок (Nike Hoops Elite Max Air / Team Backpack)
+    {
+        id: 45,
+        image: "./assets/TeamBackpackBlack.jpeg",
+        title: "Nike Hoops Elite Max Air / Team Backpack Black",
+        description: "Team Backpack\nBlack",
+        color: "Black",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    {
+        id: 46,
+        image: "./assets/NikeHoopsEliteMaxAirWhite.jpeg",
+        title: "Nike Hoops Elite Max Air / Team Backpack White",
+        description: "Team Backpack\nWhite",
+        color: "White",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    {
+        id: 47,
+        image: "./assets/TeamBackpackNavyBlue.jpeg",
+        title: "Nike Hoops Elite Max Air / Team Backpack Navy",
+        description: "Team Backpack\nNavy",
+        color: "Navy",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    {
+        id: 48,
+        image: "./assets/NikeHoopsEliteMaxAirRed.jpeg",
+        title: "Nike Hoops Elite Max Air / Team Backpack Red",
+        description: "Team Backpack\nRed",
+        color: "Red",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    {
+        id: 49,
+        image: "./assets/NikeHoopsEliteMaxAirAsmanBlue.jpeg",
+        title: "Nike Hoops Elite Max Air / Team Backpack Blue",
+        description: "Team Backpack\nBlue",
+        color: "Blue",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    {
+        id: 50,
+        image: "./assets/NikeHoopsEliteMaxAirGray.jpeg",
+        title: "Nike Hoops Elite Max Air / Team Backpack Grey",
+        description: "Team Backpack\nGrey",
+        color: "Grey",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    {
+        id: 43,
+        image: "./assets/NikeHoopsEliteMaxAirGoldenNike.jpeg",
+        title: "Nike Hoops Elite Max Air / Team Backpack Golden Write",
+        description: "Elite Pro Backpack\nBlue",
+        color: "Blue",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    {
+        id: 44,
+        image: "./assets/NikeHoopsEliteMaxAirPink.jpeg",
+        title: "Nike Hoops Elite Max Air / Team Backpack Tiger Pink",
+        description: "Elite Pro Backpack\nOrange",
+        color: "Orange",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+     {
+        id: 45,
+        image: "./assets/NikeHoopsEliteMaxAirTigerWhite.jpeg",
+        title: "Nike Hoops Elite Max Air / Team Backpack Tiger White",
+        description: "Elite Pro Backpack\nOrange",
+        color: "Orange",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    {
+        id: 51,
+        image: "./assets/NikeHoopsEliteProBasketballBackpackAsmanBlue.jpeg",
+        title: "Nike Hoops Elite Pro Basketball Backpack Blue",
+        description: "Elite Pro Backpack\nBlue",
+        color: "Blue",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    {
+        id: 52,
+        image: "./assets/NikeHoopsEliteProBasketballBackpackGoldenWhire.jpeg",
+        title: "Nike Hoops Elite Pro Basketball Golden Black",
+        description: "Elite Pro Backpack\nGolden Black",
+        color: "Golden Black",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+
+    // Nike Utility Elite Backpack
+    {
+        id: 53,
+        image: "./assets/NikeUtilityEliteBackpackPink.jpeg",
+        title: "Nike Utility Elite Backpack Pink",
+        description: "Utility Elite Backpack\nPink",
+        color: "Pink",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    {
+        id: 54,
+        image: "./assets/Nike Utility Elite BackpackOrange.jpeg",
+        title: "Nike Utility Elite Backpack Orange",
+        description: "Utility Elite Backpack\nOrange",
+        color: "Orange",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    {
+        id: 55,
+        image: "./assets/Nike Utility Elite BackpackShinePink.jpeg",
+        title: "Nike Utility Elite Backpack Shine Pink",
+        description: "Utility Elite Backpack\nShine Pink",
+        color: "Shine Pink",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    {
+        id: 56,
+        image: "./assets/Nike Utility Elite BackpackGray.jpeg",
+        title: "Nike Utility Elite Backpack Gray",
+        description: "Utility Elite Backpack\nGray",
+        color: "Gray",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    {
+        id: 57,
+        image: "./assets/Nike Utility Elite BackpackWhiteBlack.jpeg",
+        title: "Nike Utility Elite Backpack White Black",
+        description: "Utility Elite Backpack\nWhite Black",
+        color: "White Black",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    {
+        id: 58,
+        image: "./assets/Nike Utility Elite BackpackBlack.jpeg",
+        title: "Nike Utility Elite Backpack Black",
+        description: "Utility Elite Backpack\nBlack",
+        color: "Black",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    {
+        id: 59,
+        image: "./assets/Nike Utility Elite BackpackBlack-Pink.jpeg",
+        title: "Nike Utility Elite Backpack Black-Pink",
+        description: "Utility Elite Backpack\nBlack-Pink",
+        color: "Black-Pink",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    {
+        id: 60,
+        image: "./assets/Nike Utility Elite BackpackBlack-Gray.jpeg",
+        title: "Nike Utility Elite Backpack Black-Gray",
+        description: "Utility Elite Backpack\nBlack-Gray",
+        color: "Black-Gray",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    {
+        id: 61,
+        image: "./assets/Nike Utility Elite Backpacklack-yellow.jpeg",
+        title: "Nike Utility Elite Backpack Black-Yellow",
+        description: "Utility Elite Backpack\nBlack-Yellow",
+        color: "Black-Yellow",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    {
+        id: 62,
+        image: "./assets/Nike Utility Elite Backpack Blue-Orange.jpeg",
+        title: "Nike Utility Elite Backpack Blue-Orange",
+        description: "Utility Elite Backpack\nBlue-Orange",
+        color: "Blue-Orange",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
+    },
+    {
+        id: 63,
+        image: "./assets/Nike Utility Elite Backpack Red.jpeg",
+        title: "Nike Utility Elite Backpack Red",
+        description: "Utility Elite Backpack\nRed",
+        color: "Red",
+        sizes: "",
+        availableSizes: [],
+        category: "Bags",
     },
 ];
 
@@ -424,6 +710,12 @@ function getUniqueSizes() {
     const allSizes = products.flatMap((p) => p.availableSizes);
     const uniqueSizes = [...new Set(allSizes)];
     return uniqueSizes.sort();
+}
+
+// Получаем уникальные категории (только непустые)
+function getUniqueCategories() {
+    const cats = products.map((p) => p.category).filter(Boolean);
+    return [...new Set(cats)];
 }
 
 // Список файлов в папке assets (используется для автоматического сопоставления)
@@ -522,6 +814,7 @@ autoAssignLocalImages();
 function initFilters() {
     const colorFilters = document.getElementById("colorFilters");
     const sizeFilters = document.getElementById("sizeFilters");
+    const categoryFilters = document.getElementById("categoryFilters");
 
     // Фильтры по цвету
     const colors = getUniqueColors();
@@ -543,6 +836,25 @@ function initFilters() {
             filterProducts();
         });
         colorFilters.appendChild(btn);
+    });
+
+    // Фильтры по категории
+    const categories = getUniqueCategories();
+    categories.forEach((cat) => {
+        const btn = document.createElement("button");
+        btn.className = "filter-btn";
+        btn.textContent = cat;
+        btn.addEventListener("click", () => {
+            categoryFilters.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("active"));
+            if (activeFilters.category === cat) {
+                activeFilters.category = null;
+            } else {
+                btn.classList.add("active");
+                activeFilters.category = cat;
+            }
+            filterProducts();
+        });
+        categoryFilters.appendChild(btn);
     });
 
     // Фильтры по размеру
@@ -580,6 +892,11 @@ function filterProducts() {
         filteredProducts = filteredProducts.filter((p) => {
             return colorGroup(p.color) === activeFilters.color;
         });
+    }
+
+    // Фильтр по категории
+    if (activeFilters.category) {
+        filteredProducts = filteredProducts.filter((p) => p.category === activeFilters.category);
     }
 
     // Фильтр по размеру
@@ -622,9 +939,12 @@ function createProductCard(product) {
     card.setAttribute("aria-label", `Открыть ${product.title}`);
 
     const image = document.createElement("img");
-    image.src = product.image;
+    image.src = product.image ? encodeURI(product.image) : "";
     image.alt = product.title;
     image.className = "product-image";
+    image.loading = "lazy";
+    image.decoding = "async";
+    image.addEventListener("error", () => handleImageError(image));
 
     const info = document.createElement("div");
     info.className = "product-info";
@@ -648,12 +968,12 @@ function createProductCard(product) {
     card.appendChild(image);
     card.appendChild(info);
 
-    // Обработчик клика
-    card.addEventListener("click", () => openModal(product));
+    // Обработчик клика — передаём изображение карточки, чтобы в модальном не менять размер
+    card.addEventListener("click", (e) => openModal(product, image));
     card.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            openModal(product);
+            openModal(product, image);
         }
     });
 
@@ -670,7 +990,7 @@ function parseSizes(sizesString) {
 }
 
 // Открытие модального окна
-function openModal(product) {
+function openModal(product, sourceImageEl) {
     const modal = document.getElementById("modal");
     const modalImage = document.getElementById("modalImage");
     const modalTitle = document.getElementById("modalTitle");
@@ -682,14 +1002,59 @@ function openModal(product) {
     currentModalProduct = product;
     selectedSize = null;
 
-    modalImage.src = product.image;
+    modalImage.src = product.image ? encodeURI(product.image) : "";
     modalImage.alt = product.title;
+    modalImage.loading = "lazy";
+    modalImage.decoding = "async";
+    modalImage.addEventListener("error", () => handleImageError(modalImage));
+
+    // Если экран мобильный — включаем полноэкранный режим для модального изображения
+    const isMobile = window.innerWidth <= 767;
+    const modalEl = document.getElementById('modal');
+    if (isMobile) {
+        modalEl.classList.add('fullscreen-image');
+        // Даем CSS контролировать размер (чтобы картинка занимала окно)
+        modalImage.style.width = '';
+        modalImage.style.height = '';
+        modalImage.style.maxWidth = '';
+        modalImage.style.objectFit = 'cover';
+    } else {
+        modalEl.classList.remove('fullscreen-image');
+        // Если передан элемент-источник (из карточки), подгоняем размеры модального изображения
+        if (sourceImageEl && sourceImageEl instanceof Element) {
+            try {
+                const w = sourceImageEl.clientWidth;
+                const h = sourceImageEl.clientHeight;
+                // Устанавливаем inline-стили, чтобы изображение в модальном окне оставалось тем же по размеру
+                modalImage.style.width = w + "px";
+                modalImage.style.height = h + "px";
+                modalImage.style.objectFit = "cover";
+                // Ограничение по max-width чтобы не выходило за границы модального
+                modalImage.style.maxWidth = "100%";
+            } catch (e) { }
+        } else {
+            // Сбрасываем на поведение по-умолчанию
+            modalImage.style.width = "";
+            modalImage.style.height = "";
+            modalImage.style.objectFit = "cover";
+            modalImage.style.maxWidth = "";
+        }
+    }
     modalTitle.textContent = product.title;
     modalDescription.textContent = product.description;
 
     // Создаем кнопки размеров
     const sizes = parseSizes(product.sizes);
     sizeButtons.innerHTML = "";
+
+    // Если у товара нет размеров — скрываем блок выбора размеров и активируем кнопку выбора
+    const sizeSelectionContainer = document.querySelector('.size-selection');
+    if (sizes.length === 0) {
+        if (sizeSelectionContainer) sizeSelectionContainer.style.display = 'none';
+        selectBtn.disabled = false;
+    } else {
+        if (sizeSelectionContainer) sizeSelectionContainer.style.display = '';
+    }
 
     sizes.forEach((size) => {
         const btn = document.createElement("button");
@@ -709,8 +1074,12 @@ function openModal(product) {
         sizeButtons.appendChild(btn);
     });
 
-    // Сбрасываем кнопку выбора
-    selectBtn.disabled = true;
+    // Если есть размеры — по умолчанию кнопка выключена, иначе включена (товар без размеров)
+    if (sizes.length > 0) {
+        selectBtn.disabled = true;
+    } else {
+        selectBtn.disabled = false;
+    }
     selectBtn.textContent = "Выбрать эту модель";
     selectBtn.classList.remove("selected");
 
@@ -732,7 +1101,9 @@ function closeModal() {
 
 // Выбор товара
 function selectProduct(product, size) {
-    if (!size) {
+    // Если у товара есть опции размеров, то размер обязателен
+    const hasSizes = Array.isArray(product.availableSizes) && product.availableSizes.length > 0;
+    if (hasSizes && !size) {
         alert("Пожалуйста, выберите размер");
         return;
     }
@@ -743,7 +1114,7 @@ function selectProduct(product, size) {
         title: product.title,
         description: product.description,
         image: product.image,
-        size: size,
+        size: size || '',
     };
 
     cart.push(cartItem);
@@ -794,7 +1165,7 @@ function openOrderModal() {
         <div class="order-item-content">
             <div class="order-item-title">${item.title}</div>
             <div class="order-item-details">${item.description}</div>
-            <div class="order-item-size">Размер: ${item.size}</div>
+            <div class="order-item-size">${item.size ? `Размер: ${item.size}` : ''}</div>
         </div>
     `
         )
@@ -870,8 +1241,14 @@ function initModalHandlers() {
     // Обработчик кнопки выбора
     selectBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        if (currentModalProduct && selectedSize) {
-            selectProduct(currentModalProduct, selectedSize);
+        if (!currentModalProduct) return;
+        const hasSizes = Array.isArray(currentModalProduct.availableSizes) && currentModalProduct.availableSizes.length > 0;
+        if (hasSizes) {
+            if (selectedSize) selectProduct(currentModalProduct, selectedSize);
+            else alert('Пожалуйста, выберите размер');
+        } else {
+            // Товар без размеров — добавляем без размера
+            selectProduct(currentModalProduct, '');
         }
     });
 
