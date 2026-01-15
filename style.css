@@ -1417,12 +1417,10 @@ button:focus,
   outline: 3px solid var(--soft-blue);
   outline-offset: 3px;
 }
-
 /* Плавная прокрутка */
 html {
   scroll-behavior: smooth;
 }
-
 /* Полноэкранный режим модального для мобильных: картинка занимает окно, информация накладывается снизу */
 .modal.fullscreen-image .modal-content {
   width: 100vw;

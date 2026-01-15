@@ -682,7 +682,26 @@ const COLOR_GROUPS = [
 ];
 
 // Порядок и название брендов, которые отображаем первыми
-const BRANDS = ["Nike", "Polo"];
+const BRANDS = ["Nike", "Polo", "Ami Paris"];
+
+// Порядок категорий для сортировки (чтобы похожие вещи шли рядом)
+const CATEGORY_ORDER = [
+    "Tracksuit",
+    "Zip hoodie",
+    "Hoodie",
+    "Sweater",
+    "Half-zip",
+    "Cardigan",
+    "Longsleeve",
+    "T-shirt",
+    "Shirt",
+    "Jacket",
+    "Pants",
+    "Shorts",
+    "Bags",
+    "Accessories",
+    "Clothes",
+];
 
 // Возвращает бренд товара (по умолчанию Nike для существующих записей)
 function brandOf(p) {
@@ -805,7 +824,8 @@ function autoAssignLocalImages() {
         });
 
         if (best && bestScore > 0 && !usedFiles.has(fname)) {
-            best.image = "./assets/" + encodeURI(fname);
+            // Храним путь в "сыром" виде, кодирование делаем только при назначении src
+            best.image = "./assets/" + fname;
             best._assigned = true;
             usedFiles.add(fname);
             assignments.push({ file: fname, id: best.id, title: best.title, color: best.color });
@@ -825,37 +845,315 @@ function autoAssignLocalImages() {
 
 autoAssignLocalImages();
 
-// Убедимся, что для бренда Polo есть ровно 39 карточек (добавим недостающие)
-(function ensurePoloProducts() {
-    const desired = 39;
-    const existing = products.filter((p) => p.brand === "Polo").length;
-    // Начнём id сразу после максимального существующего id
+// Добавляем товары бренда Polo на основе реальных файлов из папки assetspolo
+(function addPoloProductsFromAssets() {
+    // Список файлов из папки assetspolo (должен совпадать с реальными именами)
+    const POLO_FILES = [
+        "Polo Ralph Laurent  Cap Стандарт  Black White Horse.jpeg",
+        "Polo Ralph Laurent  Cap Стандарт  Black.jpeg",
+        "Polo Ralph Laurent  Cap Стандарт  Blue.jpeg",
+        "Polo Ralph Laurent  Cap Стандарт  Brown.jpeg",
+        "Polo Ralph Laurent  Cap Стандарт  Pink.jpeg",
+        "Polo Ralph Laurent  Cap Стандарт  White.jpeg",
+        "Polo Ralph Laurent  Cap Стандарт  Бордовый.jpeg",
+        "Polo Ralph Laurent  Cardigan  Brown .jpeg",
+        "Polo Ralph Laurent  Cardigan  Gray .jpeg",
+        "Polo Ralph Laurent  Cardigan  White .jpeg",
+        "Polo Ralph Laurent  Cardigan Blue- синий Red Horse.jpeg",
+        "Polo Ralph Laurent  costume  Black.jpeg",
+        "Polo Ralph Laurent  costume  White.jpeg",
+        "Polo Ralph Laurent  costume Blue.jpeg",
+        "Polo Ralph Laurent  costume red Black.jpeg",
+        "Polo Ralph Laurent  costume red Blue.jpeg",
+        "Polo Ralph Laurent  Jacket  Black .jpeg",
+        "Polo Ralph Laurent  Jacket  Blue .jpeg",
+        "Polo Ralph Laurent  Jacket  Brown.jpeg",
+        "Polo Ralph Laurent  Longsleeve Black.jpeg",
+        "Polo Ralph Laurent  Longsleeve Blue Red Horse.jpeg",
+        "Polo Ralph Laurent  Longsleeve Gray.jpeg",
+        "Polo Ralph Laurent  Longsleeve White.jpeg",
+        "Polo Ralph Laurent  Sweater  Bear 🐻  Blue.jpeg",
+        "Polo Ralph Laurent  Sweater  Bear 🐻  White.jpeg",
+        "Polo Ralph Laurent  Sweater  Black.jpeg",
+        "Polo Ralph Laurent  Sweater  Pink.jpeg",
+        "Polo Ralph Laurent  Sweater  x USA 🇺🇸  Blue.jpeg",
+        "Polo Ralph Laurent  Sweater  x USA 🇺🇸  White.jpeg",
+        "Polo Ralph Laurent  Sweater Blue.jpeg",
+        "Polo Ralph Laurent  Sweater Gray.jpeg",
+        "Polo Ralph Laurent  Sweater White.jpeg",
+        "Polo Ralph Laurent  T-shirt   Blue.jpeg",
+        "Polo Ralph Laurent  T-shirt   Pink.jpeg",
+        "Polo Ralph Laurent  T-shirt   White.jpeg",
+        "Polo Ralph Laurent  T-shirt  Brown.jpeg",
+        "Polo Ralph Laurent  T-shirt  Gray.jpeg",
+        "Polo Ralph Laurent  T-shirt  Pink.jpeg",
+        "Polo Ralph Laurent  T-shirt  red Black.jpeg",
+        "Polo Ralph Laurent  T-shirt  Red.jpeg",
+        "Polo Ralph Laurent  T-shirt  White .jpeg",
+        "Polo Ralph Laurent  T-shirt  white Blue.jpeg",
+        "Polo Ralph Laurent  T-shirt Black.jpeg",
+        "Polo Ralph Laurent  Zip hoodie  Black.jpeg",
+        "Polo Ralph Laurent  Zip hoodie  red Blue.jpeg",
+        "Polo Ralph Laurent  Zip hoodie  White.jpeg",
+        "Polo Ralph Laurent  Zip hoodie Blue.jpeg",
+        "Polo Ralph Laurent  Zip hoodie Gray.jpeg",
+        "Polo Ralph Laurent  Zip hoodie red Black.jpeg",
+        "Polo Ralph Laurent  Полузамок  Black .jpeg",
+        "Polo Ralph Laurent  Полузамок  BlackRed Horse.jpeg",
+        "Polo Ralph Laurent  Полузамок  Blue  Red Horse.jpeg",
+        "Polo Ralph Laurent  Полузамок  Blue.jpeg",
+        "Polo Ralph Laurent  Полузамок  Gray.jpeg",
+        "PoloRalphLaurent T-shirt Blue.jpeg",
+        "PoloRalphLaurentT-shirtGray.jpeg",
+    ];
+
+    if (!POLO_FILES.length) return;
+
+    // Начинаем id сразу после максимального существующего
     let nextId = Math.max(0, ...products.map((p) => Number(p.id) || 0)) + 1;
 
-    const colors = ["Gray", "Blue", "Black", "White", "Navy", "Red", "Green"];
-    const categories = ["T-shirt", "Polo", "Caps", "Tracksuit", "Set", "Shirt", "Accessories"];
+    const normalize = (s) => (s ? s.toString().trim() : "");
 
-    for (let i = existing; i < desired; i++) {
-        const idx = i - existing;
-        const color = colors[idx % colors.length];
-        const category = categories[idx % categories.length];
-        const hasSizes = category !== "Caps" && category !== "Accessories";
+    function parsePoloMeta(filename) {
+        // Убираем расширение
+        const withoutExt = filename.replace(/\.jpeg$/i, "");
+        // Убираем префикс "Polo Ralph Laurent" или "PoloRalphLaurent"
+        let rest = withoutExt
+            .replace(/^Polo\s*Ralph\s*Laurent\s*/i, "")
+            .replace(/^PoloRalphLaurent\s*/i, "");
+
+        rest = normalize(rest);
+        if (!rest) {
+            return {
+                category: "Clothes",
+                color: "",
+            };
+        }
+
+        const parts = rest.split(/\s+/).filter(Boolean);
+        let color = "";
+        let categoryRaw = "";
+
+        if (parts.length === 1) {
+            categoryRaw = parts[0];
+        } else {
+            color = parts[parts.length - 1];
+            categoryRaw = parts.slice(0, parts.length - 1).join(" ");
+        }
+
+        // Для отображения в названии/описании меняем "футболка" на "рубашка"
+        const displayCategoryRaw = categoryRaw.replace(/футболка/gi, "рубашка");
+
+        let category = "Clothes";
+        const catNorm = categoryRaw.toLowerCase();
+        if (catNorm.includes("cap")) category = "Caps";
+        else if (catNorm.includes("costume")) category = "Tracksuit";
+        else if (catNorm.includes("jacket")) category = "Jacket";
+        else if (catNorm.includes("cardigan")) category = "Cardigan";
+        else if (catNorm.includes("sweater")) category = "Sweater";
+        else if (catNorm.includes("longsleeve")) category = "Longsleeve";
+        else if (catNorm.includes("полузамок")) category = "Half-zip";
+        else if (catNorm.includes("zip") || catNorm.includes("hoodie")) category = "Zip hoodie";
+        else if (catNorm.includes("t-shirt") || catNorm.includes("tshirt")) category = "T-shirt";
+
+        const hasSizes = category !== "Caps";
         const sizesStr = hasSizes ? "Размеры: M, L, XL, 2XL, 3XL" : "";
         const available = hasSizes ? ["M", "L", "XL", "2XL", "3XL"] : [];
 
-        const imageIndex = idx + 1;
+        return {
+            category,
+            color: color,
+            sizesStr,
+            available,
+            titleSuffix: `${categoryRaw} ${color}`.trim(),
+            descCategory: categoryRaw || category,
+            descColor: color,
+        };
+    }
+
+    POLO_FILES.forEach((fname) => {
+        const meta = parsePoloMeta(fname);
+        // Храним не кодированный путь, encodeURI применяем уже при установке src
+        const imagePath = "./assetspolo/" + fname;
+
+        const title =
+            meta.titleSuffix && meta.titleSuffix.length > 0
+                ? `Polo Ralph Laurent ${meta.titleSuffix}`
+                : "Polo Ralph Laurent";
+
+        const description =
+            (meta.descCategory || meta.category) +
+            (meta.descColor ? `\n${meta.descColor}` : "");
+
         products.push({
             id: nextId++,
-            image: `./assets/polo_${imageIndex}.jpeg`,
-            title: `Polo Ralph Lauren ${category} ${color}`,
-            description: `${category}\n${color}`,
-            color: color,
-            sizes: sizesStr,
-            availableSizes: available,
-            category: category,
+            image: imagePath,
+            title: title,
+            description: description,
+            color: meta.color,
+            sizes: meta.sizesStr,
+            availableSizes: meta.available,
+            category: meta.category,
             brand: "Polo",
         });
+    });
+})();
+
+// Заготовка для бренда Ami Paris: сюда можно добавить файлы из папки assetsAmiParis
+// По аналогии с Polo, достаточно перечислить имена файлов в AMI_FILES,
+// и карточки создадутся автоматически.
+(function addAmiParisProductsFromAssets() {
+    const AMI_FILES = [
+        "беж футболка .jpeg",
+        "Белая футболка.jpeg",
+        "зел футболка.jpeg",
+        "синий футболка.jpeg",
+        "Черная футболка.jpeg",
+        "бежевый зип худи.jpeg",
+        "бежевый кардиган.jpeg",
+        "белый зип худи.jpeg",
+        "белый кардиган с большим сердцем.jpeg",
+        "белый кардиган.jpeg",
+        "белый свитер с большим сердцем.jpeg",
+        "голубой зип худи.jpeg",
+        "голубой кардиган с большим сердцем.jpeg",
+        "голубой свитер с большим сердцем.jpeg",
+        "зеленый кардиган с большим сердцем.jpeg",
+        "зеленый свитер с большим сердцем.jpeg",
+        "красный кардиган с большим сердцем .jpeg",
+        "розовый зип худи.jpeg",
+        "розовый кардиган с большим сердцем.jpeg",
+        "розовый свитер с большим сердцем.jpeg",
+        "рубашка беж.jpeg",
+        "рубашка белый с красным сердцем.jpeg",
+        "рубашка белый.jpeg",
+        "рубашка зел.jpeg",
+        "рубашка синий.jpeg",
+        "рубашка черный.jpeg",
+        "рубашкака белый с серым сердцем.jpeg",
+        "Свитер красный.jpeg",
+        "серый зип худи.jpeg",
+        "серый кардиган с большим и красным сердцем.jpeg",
+        "серый кардиган с большим сердцем.jpeg",
+        "серый кардиган.jpeg",
+        "серый свитер .jpeg",
+        "серый свитер с большим и черным сердцем.jpeg",
+        "серый свитер с большим сердцем.jpeg",
+        "серый футболка.jpeg",
+        "синий зип худи.jpeg",
+        "синий кардиган с большим белым сердцем.jpeg",
+        "синий кардиган с большим сердцем.jpeg",
+        "синий кардиган.jpeg",
+        "синий свитер с большим сердцем.jpeg",
+        "черный кардиган ч большим серлцем.jpeg",
+        "черный кардиган.jpeg",
+        "Черный свитер с большим сердцем.jpeg",
+        "Черный свитер.jpeg",
+        "черынй зип худи.jpeg",
+        // Новые товары Ami Paris с правильными названиями
+        "Ami Paris  Cardigan  S, M, L, XL White Golden.jpeg",
+        "Ami Paris  Cardigan  S, M, L, XL White.jpeg",
+        "Ami Paris  checkered shirt S, M, L, XL beige.jpeg",
+        "Ami Paris  checkered shirt S, M, L, XL Blue.jpeg",
+        "Ami Paris  checkered shirt S, M, L, XL Pink.jpeg",
+        "Ami Paris  shirt S, M, L, XL Blue Red.jpeg",
+        "Ami Paris  shirt S, M, L, XL Blue.jpeg",
+        "Ami Paris  shirt S, M, L, XL BlueRed.jpeg",
+        "Ami Paris  shirt S, M, L, XL Brown.jpeg",
+        "Ami Paris  shirt S, M, L, XL Green.jpeg",
+        "Ami Paris  shirt S, M, L, XL Pink .jpeg",
+        "Ami Paris  shirt S, M, L, XL White.jpeg",
+        "Ami Paris  shirt S, M, L, XL Yellow.jpeg",
+        "Ami Paris  striped sweater S, M, L, XL White- black.jpeg",
+        "Ami Paris  striped sweater S, M, L, XL White- blue.jpeg",
+        "Ami Paris  Sweater  S, M, L, XL White Golden.jpeg",
+        "Ami Paris  Sweater  S, M, L, XL White.jpeg",
+    ];
+
+    if (!AMI_FILES.length) return;
+
+    let nextId = Math.max(0, ...products.map((p) => Number(p.id) || 0)) + 1;
+
+    const normalize = (s) => (s ? s.toString().trim() : "");
+
+    function parseAmiMeta(filename) {
+        const withoutExt = filename.replace(/\.jpe?g$/i, "");
+        let rest = normalize(withoutExt);
+
+        // Убираем возможный префикс "Ami Paris"
+        rest = rest.replace(/^Ami\s*Paris\s*/i, "").trim();
+
+        // Убираем размеры "S, M, L, XL" если они есть (формат: "Cardigan  S, M, L, XL White")
+        rest = rest.replace(/\s*S\s*,\s*M\s*,\s*L\s*,\s*XL\s*/i, " ").trim();
+
+        const parts = rest.split(/\s+/).filter(Boolean);
+        let color = "";
+        let categoryRaw = "";
+
+        if (parts.length === 1) {
+            categoryRaw = parts[0];
+        } else {
+            // Берем последнее слово как цвет (может быть составным, например "White- black")
+            color = parts[parts.length - 1];
+            // Все остальное - категория
+            categoryRaw = parts.slice(0, parts.length - 1).join(" ");
+        }
+
+        let category = "Clothes";
+        const catNorm = categoryRaw.toLowerCase();
+        if (catNorm.includes("hoodie") || catNorm.includes("худи")) category = "Hoodie";
+        else if (catNorm.includes("sweatshirt")) category = "Sweatshirt";
+        else if (catNorm.includes("cardigan") || catNorm.includes("кардиган")) category = "Cardigan";
+        else if (catNorm.includes("sweater") || catNorm.includes("свитер")) category = "Sweater";
+        else if (catNorm.includes("зип")) category = "Zip hoodie";
+        else if (catNorm.includes("рубашка") || catNorm.includes("рубашкака")) category = "Shirt";
+        else if (catNorm.includes("checkered shirt")) category = "Shirt"; // Рубашка в клетку
+        else if (catNorm.includes("t-shirt") || catNorm.includes("tshirt") || catNorm.includes("tee") || catNorm.includes("футболка")) category = "T-shirt";
+        else if (catNorm.includes("shirt")) category = "Shirt";
+        else if (catNorm.includes("jacket")) category = "Jacket";
+        else if (catNorm.includes("pants") || catNorm.includes("trousers")) category = "Pants";
+        else if (catNorm.includes("shorts")) category = "Shorts";
+
+        const hasSizes = true;
+        const sizesStr = "Размеры: S, M, L, XL";
+        const available = ["S", "M", "L", "XL"];
+
+        return {
+            category,
+            color,
+            sizesStr,
+            available,
+            titleSuffix: `${categoryRaw} ${color}`.trim(),
+            descCategory: categoryRaw || category,
+            descColor: color,
+        };
     }
+
+    AMI_FILES.forEach((fname) => {
+        const meta = parseAmiMeta(fname);
+        const imagePath = "./assetsAmiParis/" + fname;
+
+        const title =
+            meta.titleSuffix && meta.titleSuffix.length > 0
+                ? `Ami Paris ${meta.titleSuffix}`
+                : "Ami Paris";
+
+        const description =
+            (meta.descCategory || meta.category) +
+            (meta.descColor ? `\n${meta.descColor}` : "");
+
+        products.push({
+            id: nextId++,
+            image: imagePath,
+            title,
+            description,
+            color: meta.color,
+            sizes: meta.sizesStr,
+            availableSizes: meta.available,
+            category: meta.category,
+            brand: "Ami Paris",
+        });
+    });
 })();
 
 // Инициализация фильтров
@@ -930,8 +1228,8 @@ function initFilters() {
 
     // Фильтры по бренду
     brandFilters.innerHTML = "";
-    // Показать бренды в заранее определённом порядке, если они есть
-    const availBrands = BRANDS.filter((b) => products.some((p) => brandOf(p) === b));
+    // Показываем все бренды из BRANDS в заданном порядке
+    const availBrands = BRANDS;
     availBrands.forEach((b) => {
         const btn = document.createElement("button");
         btn.className = "filter-btn";
@@ -1003,6 +1301,18 @@ function filterProducts() {
             p.availableSizes.includes(activeFilters.size)
         );
     }
+
+    // Сортировка: сначала по категории (по заданному порядку), внутри — по названию
+    filteredProducts.sort((a, b) => {
+        const ca = a.category || "Clothes";
+        const cb = b.category || "Clothes";
+        const ia = CATEGORY_ORDER.indexOf(ca);
+        const ib = CATEGORY_ORDER.indexOf(cb);
+        const sa = ia === -1 ? CATEGORY_ORDER.length : ia;
+        const sb = ib === -1 ? CATEGORY_ORDER.length : ib;
+        if (sa !== sb) return sa - sb;
+        return (a.title || "").localeCompare(b.title || "", "ru");
+    });
 
     // Отображаем отфильтрованные товары
     filteredProducts.forEach((product) => {
